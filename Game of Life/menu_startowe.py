@@ -14,6 +14,8 @@ class MenuKonfiguracyjne:
         self.wybrana_wysokosc = tk.IntVar(value=ust.WYSOKOSC_OKNA)
         self.start_losowy = tk.BooleanVar(value=True)
 
+        self.wybrana_predkosc = tk.IntVar(value=ust.CZESTOTLIWOSC_ODSWIEZANIA)
+
         self.budowanie_interfejsu()
         self.czy_uruchomic_gre = False
 
@@ -27,6 +29,16 @@ class MenuKonfiguracyjne:
         tk.Checkbutton(self.okno_glowne, text="Start z losową planszą", variable=self.start_losowy).pack(pady=10)
 
         tk.Button(self.okno_glowne, text="URUCHOM SYMULACJĘ", command=self.zatwierdz, bg="#dddddd").pack(pady=20, padx=50)
+
+        tk.Label(self.okno_glowne, text="Prędkość (FPS):").pack(pady=5)
+
+        tk.Scale(
+            self.okno_glowne,
+            from_=1,
+            to=60,
+            orient=tk.HORIZONTAL,
+            variable=self.wybrana_predkosc
+        ).pack()
 
     def zatwierdz(self):
         try:
@@ -49,6 +61,7 @@ class MenuKonfiguracyjne:
             return {
                 "szerokosc": self.wybrana_szerokosc.get(),
                 "wysokosc": self.wybrana_wysokosc.get(),
-                "losowy_start": self.start_losowy.get()
+                "losowy_start": self.start_losowy.get(),
+                "fps": self.wybrana_predkosc.get()
             }
         return None

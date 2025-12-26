@@ -9,6 +9,7 @@ class OknoGry:
 
         self.szerokosc = konfiguracja["szerokosc"]
         self.wysokosc = konfiguracja["wysokosc"]
+        self.fps = konfiguracja["fps"]
 
         self.ekran = pygame.display.set_mode((self.szerokosc, self.wysokosc))
         pygame.display.set_caption(ust.NAZWA_OKNA)
@@ -53,6 +54,6 @@ class OknoGry:
                 self.siatka.oblicz_nastepne_pokolenie()
 
             self.rysuj_siatke()
-            self.zegar.tick(ust.CZESTOTLIWOSC_ODSWIEZANIA)
+            self.zegar.tick(self.fps)
 
         pygame.quit()
