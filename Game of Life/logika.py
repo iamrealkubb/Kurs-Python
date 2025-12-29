@@ -5,8 +5,8 @@ from scipy.signal import convolve2d
 class Siatka:
 
     def __init__(self, szerokosc, wysokosc, rozmiar_komorki):
-        self.liczba_kolumn = szerokosc
-        self.liczba_wierszy = wysokosc
+        self.liczba_kolumn = szerokosc // rozmiar_komorki
+        self.liczba_wierszy = wysokosc // rozmiar_komorki
         self.rozmiar_komorki = rozmiar_komorki
 
         self.obecny_stan = np.zeros((self.liczba_kolumn, self.liczba_wierszy))
