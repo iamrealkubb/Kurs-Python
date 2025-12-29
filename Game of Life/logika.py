@@ -19,6 +19,8 @@ class Siatka:
         )
 
     def oblicz_nastepne_pokolenie(self):
+        stan_binarnie = (self.obecny_stan > 0).astype(int)
+
         maska_sasiedztwa = np.array([
             [1, 1, 1],
             [1, 0, 1],
@@ -27,22 +29,24 @@ class Siatka:
 
         # splot macierzy
         liczba_sasiadow = convolve2d(
-            self.obecny_stan,
+            stan_binarnie,
             maska_sasiedztwa,
             mode='same', # macierz wynikowa ma takie same wymiary jak wejsciowa
             boundary='wrap' # pozwala na zapetlenie planszy
         )
 
         narodziny = (liczba_sasiadow == 3) & (self.obecny_stan == 0)
-        przezycie = ((liczba_sasiadow == 2) | (liczba_sasiadow == 3)) & (self.obecny_stan == 1)
+        przezycie = ((liczba_sasiadow == 2) | (liczba_sasiadow == 3)) & (stan_binarnie == 1)
 
-        # reset planszy
-        self.obecny_stan[:] = 0
-        self.obecny_stan[narodziny | przezycie] = 1
+        nowy_stan = np.zeros_like(self.obecny_stan)
+        nowy_stan[przezycie] = self.obecny_stan[przezycie] + 1
+        nowy_stan[narodziny] = 1
+
+        self.obecny_stan[:] = nowy_stan
 
     def zmien_stan_komorki(self, x, y):
         if 0 <= x < self.liczba_kolumn and 0 <= y < self.liczba_wierszy:
-            if self.obecny_stan[x, y] == 1:
+            if self.obecny_stan[x, y] > 0:
                 self.obecny_stan[x, y] = 0
             else:
                 self.obecny_stan[x, y] = 1

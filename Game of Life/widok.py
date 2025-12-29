@@ -45,12 +45,14 @@ class OknoGry:
             pygame.draw.line(self.ekran, ust.KOLOR_SIATKI, (0, y), (self.szerokosc, y))
 
         wspolrzedne_x, wspolrzedne_y = self.siatka.obecny_stan.nonzero()
-
         rozmiar = self.siatka.rozmiar_komorki
 
         for x, y in zip(wspolrzedne_x, wspolrzedne_y):
+            wiek = self.siatka.obecny_stan[x, y]
+            kolor = self.pobierz_kolor(wiek)
+
             prostokat = pygame.Rect(x * rozmiar + 1, y * rozmiar + 1, rozmiar - 1, rozmiar - 1)
-            pygame.draw.rect(self.ekran, ust.KOLOR_ZYWEJ_KOMORKI, prostokat)
+            pygame.draw.rect(self.ekran, kolor, prostokat)
 
         self.rysuj_info()
         pygame.display.flip()
@@ -91,6 +93,14 @@ class OknoGry:
                     self.siatka.zmien_stan_komorki(kolumna, wiersz)
 
                     self.rysuj_siatke()
+
+    def pobierz_kolor(self, wiek):
+        if wiek == 1:
+            return (0, 255, 0)
+
+        zielony = max(50, 255 - wiek * 2)
+        niebieski = min(200, wiek * 3)
+        return (0, zielony, niebieski)
 
     def petla_glowna(self):
         while self.czy_dziala:
