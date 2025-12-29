@@ -19,9 +19,11 @@ class OknoGry:
 
         if konfiguracja["losowy_start"]:
             self.siatka.generuj_losowa_plansze()
+            self.pauza = False
+        else:
+            self.pauza = True
 
         self.czy_dziala = True
-        self.pauza = False
 
     def rysuj_siatke(self):
         self.ekran.fill(ust.KOLOR_TLA)
@@ -45,6 +47,16 @@ class OknoGry:
                     self.pauza = not self.pauza
                 elif zdarzenie.key == pygame.K_ESCAPE:
                     self.czy_dziala = False
+            elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
+                if zdarzenie.button == 1:
+                    mysz_x, mysz_y = pygame.mouse.get_pos()
+
+                    kolumna = mysz_x // ust.ROZMIAR_KOMORKI
+                    wiersz = mysz_y // ust.ROZMIAR_KOMORKI
+
+                    self.siatka.zmien_stan_komorki(kolumna, wiersz)
+
+                    self.rysuj_siatke()
 
     def petla_glowna(self):
         while self.czy_dziala:

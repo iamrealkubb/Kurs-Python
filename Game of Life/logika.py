@@ -39,3 +39,10 @@ class Siatka:
         # reset planszy
         self.obecny_stan[:] = 0
         self.obecny_stan[narodziny | przezycie] = 1
+
+    def zmien_stan_komorki(self, x, y):
+        if 0 <= x < self.liczba_kolumn and 0 <= y < self.liczba_wierszy:
+            if self.obecny_stan[x, y] == 1:
+                self.obecny_stan[x, y] = 0
+            else:
+                self.obecny_stan[x, y] = 1
