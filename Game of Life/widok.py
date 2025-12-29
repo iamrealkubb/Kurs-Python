@@ -47,6 +47,10 @@ class OknoGry:
                     self.pauza = not self.pauza
                 elif zdarzenie.key == pygame.K_ESCAPE:
                     self.czy_dziala = False
+                elif zdarzenie.key == pygame.K_r:
+                    if self.pauza:
+                        self.siatka.reset_planszy()
+                        self.rysuj_siatke()
             elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
                 if zdarzenie.button == 1:
                     mysz_x, mysz_y = pygame.mouse.get_pos()

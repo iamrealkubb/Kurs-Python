@@ -46,3 +46,6 @@ class Siatka:
                 self.obecny_stan[x, y] = 0
             else:
                 self.obecny_stan[x, y] = 1
+
+    def reset_planszy(self):
+        self.obecny_stan[:] = 0
