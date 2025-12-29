@@ -17,6 +17,9 @@ class OknoGry:
         pygame.display.set_caption(ust.NAZWA_OKNA)
         self.zegar = pygame.time.Clock()
 
+        self.czcionka = pygame.font.SysFont("Arial", 18)
+        self.licznik_krokow = 0
+
         self.siatka = Siatka(self.szerokosc, self.wysokosc, ust.ROZMIAR_KOMORKI)
 
         if konfiguracja["losowy_start"]:
@@ -27,17 +30,31 @@ class OknoGry:
 
         self.czy_dziala = True
 
+    def rysuj_info(self):
+        tekst_fps = self.czcionka.render(f"Prędkość: {self.fps} FPS", True, ust.KOLOR_TEKSTU)
+        tekst_krok = self.czcionka.render(f"Iteracja: {self.licznik_krokow}", True, ust.KOLOR_TEKSTU)
+
+        self.ekran.blit(tekst_fps, (10, 10))
+        self.ekran.blit(tekst_krok, (10, 35))
+
     def rysuj_siatke(self):
-        self.ekran.fill(ust.KOLOR_TLA)
+        self.ekran.fill(ust.KOLOR_MARTWEJ_KOMORKI)
+
+        for x in range(0, self.szerokosc, self.siatka.rozmiar_komorki):
+            pygame.draw.line(self.ekran, ust.KOLOR_SIATKI, (x, 0), (x, self.wysokosc))
+
+        for y in range(0, self.wysokosc, self.siatka.rozmiar_komorki):
+            pygame.draw.line(self.ekran, ust.KOLOR_SIATKI, (0, y), (self.szerokosc, y))
 
         wspolrzedne_x, wspolrzedne_y = self.siatka.obecny_stan.nonzero()
 
         rozmiar = self.siatka.rozmiar_komorki
 
         for x, y in zip(wspolrzedne_x, wspolrzedne_y):
-            prostokat = pygame.Rect(x * rozmiar, y * rozmiar, rozmiar - 1, rozmiar - 1)
+            prostokat = pygame.Rect(x * rozmiar + 1, y * rozmiar + 1, rozmiar - 1, rozmiar - 1)
             pygame.draw.rect(self.ekran, ust.KOLOR_ZYWEJ_KOMORKI, prostokat)
 
+        self.rysuj_info()
         pygame.display.flip()
 
     def zmien_predkosc(self, wartosc):
@@ -60,6 +77,7 @@ class OknoGry:
                 elif zdarzenie.key == pygame.K_r:
                     if self.pauza:
                         self.siatka.reset_planszy()
+                        self.licznik_krokow = 0
                         self.rysuj_siatke()
                 elif zdarzenie.key == pygame.K_LEFT:
                     self.zmien_predkosc(-2)
@@ -82,6 +100,7 @@ class OknoGry:
 
             if not self.pauza:
                 self.siatka.oblicz_nastepne_pokolenie()
+                self.licznik_krokow += 1
                 self.zegar.tick(self.fps)
             else:
                 self.zegar.tick(60)
