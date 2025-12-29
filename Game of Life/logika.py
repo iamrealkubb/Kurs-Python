@@ -34,7 +34,7 @@ class Siatka:
         )
 
         narodziny = (liczba_sasiadow == 3) & (self.obecny_stan == 0)
-        przezycie = ((liczba_sasiadow == 2) | (liczba_sasiadow == 3) & (self.obecny_stan == 1))
+        przezycie = ((liczba_sasiadow == 2) | (liczba_sasiadow == 3)) & (self.obecny_stan == 1)
 
         # reset planszy
         self.obecny_stan[:] = 0
