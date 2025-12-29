@@ -7,6 +7,8 @@ class OknoGry:
     def __init__(self, konfiguracja):
         pygame.init()
 
+        pygame.key.set_repeat(500, 30)
+
         self.szerokosc = konfiguracja["szerokosc"]
         self.wysokosc = konfiguracja["wysokosc"]
         self.fps = konfiguracja["fps"]
@@ -38,6 +40,14 @@ class OknoGry:
 
         pygame.display.flip()
 
+    def zmien_predkosc(self, wartosc):
+        self.fps += wartosc
+
+        if self.fps < 1:
+            self.fps = 1
+        elif self.fps > 60:
+            self.fps = 60
+
     def obslugiwanie_zdarzen(self):
         for zdarzenie in pygame.event.get():
             if zdarzenie.type == pygame.QUIT:
@@ -51,6 +61,10 @@ class OknoGry:
                     if self.pauza:
                         self.siatka.reset_planszy()
                         self.rysuj_siatke()
+                elif zdarzenie.key == pygame.K_LEFT:
+                    self.zmien_predkosc(-2)
+                elif zdarzenie.key == pygame.K_RIGHT:
+                    self.zmien_predkosc(2)
             elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
                 if zdarzenie.button == 1:
                     mysz_x, mysz_y = pygame.mouse.get_pos()
