@@ -82,8 +82,10 @@ class OknoGry:
 
             if not self.pauza:
                 self.siatka.oblicz_nastepne_pokolenie()
+                self.zegar.tick(self.fps)
+            else:
+                self.zegar.tick(60)
 
             self.rysuj_siatke()
-            self.zegar.tick(self.fps)
 
         pygame.quit()
