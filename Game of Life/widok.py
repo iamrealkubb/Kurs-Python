@@ -22,7 +22,12 @@ class OknoGry:
         self.lista_nazw_wzorow = list(BIBLIOTEKA_WZOROW.keys())
         self.indeks_wybranego_wzoru = 0
 
-        self.siatka = Siatka(self.szerokosc, self.wysokosc, ust.ROZMIAR_KOMORKI)
+        self.siatka = Siatka(
+            self.szerokosc,
+            self.wysokosc,
+            ust.ROZMIAR_KOMORKI,
+            tryb_torus=konfiguracja["tryb_torus"]
+        )
 
         if konfiguracja["losowy_start"]:
             self.siatka.generuj_losowa_plansze()
@@ -54,12 +59,16 @@ class OknoGry:
 
         wspolrzedne_x, wspolrzedne_y = self.siatka.obecny_stan.nonzero()
         rozmiar = self.siatka.rozmiar_komorki
+        margines = self.siatka.margines
 
         for x, y in zip(wspolrzedne_x, wspolrzedne_y):
+            prawdziwy_x = (x - margines) * rozmiar
+            prawdziwy_y = (y - margines) * rozmiar
+
             wiek = self.siatka.obecny_stan[x, y]
             kolor = self.pobierz_kolor(wiek)
 
-            prostokat = pygame.Rect(x * rozmiar + 1, y * rozmiar + 1, rozmiar - 1, rozmiar - 1)
+            prostokat = pygame.Rect(prawdziwy_x + 1, prawdziwy_y + 1, rozmiar - 1, rozmiar - 1)
             pygame.draw.rect(self.ekran, kolor, prostokat)
 
         self.rysuj_info()

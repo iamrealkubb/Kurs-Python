@@ -8,11 +8,12 @@ class MenuKonfiguracyjne:
         self.okno_glowne = tk.Tk()
         self.okno_glowne.title("Konfigurator Symulacji")
 
-        self.okno_glowne.geometry("400x300")
+        self.okno_glowne.geometry("500x400")
 
         self.wybrana_szerokosc = tk.IntVar(value=ust.SZEROKOSC_OKNA)
         self.wybrana_wysokosc = tk.IntVar(value=ust.WYSOKOSC_OKNA)
         self.start_losowy = tk.BooleanVar(value=True)
+        self.tryb_torus = tk.BooleanVar(value=True)
 
         self.wybrana_predkosc = tk.IntVar(value=ust.CZESTOTLIWOSC_ODSWIEZANIA)
 
@@ -27,6 +28,8 @@ class MenuKonfiguracyjne:
         tk.Entry(self.okno_glowne, textvariable=self.wybrana_wysokosc).pack()
 
         tk.Checkbutton(self.okno_glowne, text="Start z losową planszą", variable=self.start_losowy).pack(pady=10)
+
+        tk.Checkbutton(self.okno_glowne, text="Tryb Torus", variable=self.tryb_torus).pack(pady=5)
 
         tk.Button(self.okno_glowne, text="URUCHOM SYMULACJĘ", command=self.zatwierdz, bg="#dddddd").pack(pady=20, padx=50)
 
@@ -62,6 +65,7 @@ class MenuKonfiguracyjne:
                 "szerokosc": self.wybrana_szerokosc.get(),
                 "wysokosc": self.wybrana_wysokosc.get(),
                 "losowy_start": self.start_losowy.get(),
-                "fps": self.wybrana_predkosc.get()
+                "fps": self.wybrana_predkosc.get(),
+                "tryb_torus": self.tryb_torus.get()
             }
         return None

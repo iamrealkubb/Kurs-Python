@@ -4,10 +4,22 @@ from scipy.signal import convolve2d
 
 class Siatka:
 
-    def __init__(self, szerokosc, wysokosc, rozmiar_komorki):
-        self.liczba_kolumn = szerokosc // rozmiar_komorki
-        self.liczba_wierszy = wysokosc // rozmiar_komorki
+    def __init__(self, szerokosc, wysokosc, rozmiar_komorki, tryb_torus=True):
+        self.widoczne_kolumny = szerokosc // rozmiar_komorki
+        self.widoczne_wiersze = wysokosc // rozmiar_komorki
         self.rozmiar_komorki = rozmiar_komorki
+
+        self.margines = 10
+
+        self.liczba_kolumn = self.widoczne_kolumny + 2 * self.margines
+        self.liczba_wierszy = self.widoczne_wiersze + 2 * self.margines
+
+        self.licznik_czyszczenia = 0
+
+        if tryb_torus:
+            self.ograniczanie = 'wrap'
+        else:
+            self.ograniczanie = 'fill'
 
         self.obecny_stan = np.zeros((self.liczba_kolumn, self.liczba_wierszy))
 
@@ -17,6 +29,7 @@ class Siatka:
             size=(self.liczba_kolumn, self.liczba_wierszy),
             p=[1 - ust.PRAWDOPODOBIENSTWO_ZYCIA, ust.PRAWDOPODOBIENSTWO_ZYCIA]
         )
+        self.wyczysc_marginesy()
 
     def oblicz_nastepne_pokolenie(self):
         stan_binarnie = (self.obecny_stan > 0).astype(int)
@@ -32,7 +45,8 @@ class Siatka:
             stan_binarnie,
             maska_sasiedztwa,
             mode='same', # macierz wynikowa ma takie same wymiary jak wejsciowa
-            boundary='wrap' # pozwala na zapetlenie planszy
+            boundary=self.ograniczanie,
+            fillvalue=0
         )
 
         narodziny = (liczba_sasiadow == 3) & (self.obecny_stan == 0)
@@ -44,7 +58,22 @@ class Siatka:
 
         self.obecny_stan[:] = nowy_stan
 
+        if self.ograniczanie == 'fill':
+            self.licznik_czyszczenia += 1
+            if self.licznik_czyszczenia >= 10:
+                self.wyczysc_marginesy()
+                self.licznik_czyszczenia = 0
+
+    def wyczysc_marginesy(self):
+        m = self.margines
+        self.obecny_stan[:m, :] = 0
+        self.obecny_stan[-m:, :] = 0
+        self.obecny_stan[:, :m] = 0
+        self.obecny_stan[:, -m:] = 0
+
     def zmien_stan_komorki(self, x, y):
+        x += self.margines
+        y += self.margines
         if 0 <= x < self.liczba_kolumn and 0 <= y < self.liczba_wierszy:
             if self.obecny_stan[x, y] > 0:
                 self.obecny_stan[x, y] = 0
@@ -55,6 +84,8 @@ class Siatka:
         self.obecny_stan[:] = 0
 
     def wstaw_wzor(self, x, y, wzor):
+        x += self.margines
+        y += self.margines
         wzor_np = np.array(wzor).T
         szer_wzoru, wys_wzoru = wzor_np.shape
 
