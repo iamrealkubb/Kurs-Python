@@ -53,3 +53,10 @@ class Siatka:
 
     def reset_planszy(self):
         self.obecny_stan[:] = 0
+
+    def wstaw_wzor(self, x, y, wzor):
+        wzor_np = np.array(wzor).T
+        szer_wzoru, wys_wzoru = wzor_np.shape
+
+        if x + szer_wzoru <= self.liczba_kolumn and y + wys_wzoru <= self.liczba_wierszy:
+            self.obecny_stan[x : x + szer_wzoru, y : y + wys_wzoru] = wzor_np

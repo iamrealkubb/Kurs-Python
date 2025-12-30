@@ -1,6 +1,7 @@
 import pygame
 import ustawienia as ust
 from logika import Siatka
+from wzory import BIBLIOTEKA_WZOROW
 
 class OknoGry:
 
@@ -18,6 +19,9 @@ class OknoGry:
         self.czcionka = pygame.font.SysFont("Arial", 18)
         self.licznik_krokow = 0
 
+        self.lista_nazw_wzorow = list(BIBLIOTEKA_WZOROW.keys())
+        self.indeks_wybranego_wzoru = 0
+
         self.siatka = Siatka(self.szerokosc, self.wysokosc, ust.ROZMIAR_KOMORKI)
 
         if konfiguracja["losowy_start"]:
@@ -32,8 +36,12 @@ class OknoGry:
         tekst_fps = self.czcionka.render(f"Prędkość: {self.fps} FPS", True, ust.KOLOR_TEKSTU)
         tekst_krok = self.czcionka.render(f"Iteracja: {self.licznik_krokow}", True, ust.KOLOR_TEKSTU)
 
+        obecna_nazwa = self.lista_nazw_wzorow[self.indeks_wybranego_wzoru]
+        tekst_wzor = self.czcionka.render(f"PPM: {obecna_nazwa} [Zmień: < >]", True, (255, 255, 0))
+
         self.ekran.blit(tekst_fps, (10, 10))
         self.ekran.blit(tekst_krok, (10, 35))
+        self.ekran.blit(tekst_wzor, (10,60))
 
     def rysuj_siatke(self):
         self.ekran.fill(ust.KOLOR_MARTWEJ_KOMORKI)
@@ -83,16 +91,26 @@ class OknoGry:
                     self.zmien_predkosc(-5)
                 elif zdarzenie.key == pygame.K_RIGHT:
                     self.zmien_predkosc(5)
-            elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
-                if zdarzenie.button == 1:
-                    mysz_x, mysz_y = pygame.mouse.get_pos()
-
-                    kolumna = mysz_x // ust.ROZMIAR_KOMORKI
-                    wiersz = mysz_y // ust.ROZMIAR_KOMORKI
-
-                    self.siatka.zmien_stan_komorki(kolumna, wiersz)
-
+                elif zdarzenie.key == pygame.K_PERIOD:
+                    self.indeks_wybranego_wzoru = (self.indeks_wybranego_wzoru + 1) % len(self.lista_nazw_wzorow)
                     self.rysuj_siatke()
+                elif zdarzenie.key == pygame.K_COMMA:
+                    self.indeks_wybranego_wzoru = (self.indeks_wybranego_wzoru - 1) % len(self.lista_nazw_wzorow)
+                    self.rysuj_siatke()
+            elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
+                mysz_x, mysz_y = pygame.mouse.get_pos()
+                kolumna = mysz_x // ust.ROZMIAR_KOMORKI
+                wiersz = mysz_y // ust.ROZMIAR_KOMORKI
+
+                if zdarzenie.button == 1:
+                    self.siatka.zmien_stan_komorki(kolumna, wiersz)
+                elif zdarzenie.button == 3:
+                    nazwa = self.lista_nazw_wzorow[self.indeks_wybranego_wzoru]
+                    wzor = BIBLIOTEKA_WZOROW[nazwa]
+
+                    self.siatka.wstaw_wzor(kolumna, wiersz, wzor)
+
+                self.rysuj_siatke()
 
     def pobierz_kolor(self, wiek):
         if wiek == 1:
