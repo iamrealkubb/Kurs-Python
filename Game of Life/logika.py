@@ -1,6 +1,7 @@
 import numpy as np
 import ustawienia as ust
 from scipy.signal import convolve2d
+import pickle
 
 class Siatka:
 
@@ -91,3 +92,21 @@ class Siatka:
 
         if x + szer_wzoru <= self.liczba_kolumn and y + wys_wzoru <= self.liczba_wierszy:
             self.obecny_stan[x : x + szer_wzoru, y : y + wys_wzoru] = wzor_np
+
+    def zapisz_stan(self, nazwa_pliku="zapis_gry.dat"):
+        with open(nazwa_pliku, 'wb') as plik:
+            pickle.dump(self.obecny_stan, plik)
+        print(f"Zapisano stan do {nazwa_pliku}")
+
+    def wczytaj_stan(self, nazwa_pliku="zapis_gry.dat"):
+        try:
+            with open(nazwa_pliku, 'rb') as plik:
+                wczytana_tablica = pickle.load(plik)
+
+                if wczytana_tablica.shape == self.obecny_stan.shape:
+                    self.obecny_stan = wczytana_tablica
+                    print(f"Wczytano stan z {nazwa_pliku}")
+                else:
+                    print("Błąd: Zapisany stan ma inne wymiary niż obecne okno")
+        except FileNotFoundError:
+            print("Błąd: Brak pliku")

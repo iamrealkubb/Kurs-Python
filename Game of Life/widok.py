@@ -106,6 +106,11 @@ class OknoGry:
                 elif zdarzenie.key == pygame.K_COMMA:
                     self.indeks_wybranego_wzoru = (self.indeks_wybranego_wzoru - 1) % len(self.lista_nazw_wzorow)
                     self.rysuj_siatke()
+                elif zdarzenie.key == pygame.K_s:
+                    self.siatka.zapisz_stan()
+                elif zdarzenie.key == pygame.K_l:
+                    self.siatka.wczytaj_stan()
+                    self.rysuj_siatke()
             elif zdarzenie.type == pygame.MOUSEBUTTONDOWN:
                 mysz_x, mysz_y = pygame.mouse.get_pos()
                 kolumna = mysz_x // ust.ROZMIAR_KOMORKI
